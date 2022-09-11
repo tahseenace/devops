@@ -1,0 +1,21 @@
+Workshops
+------------------------
+
+1. Adding Security into DevOps: https://devops.awssecworkshops.com/
+-----------------------------------------------------------------
+
+Scenario
+- build a pipeline using CodePipeline and AWS Lambda. S3 is code repository
+- developers want to deploy CloudFormatoin template
+- my goal is to ensure this template is secure before this goes to production
+
+This was not useful so far.
+
+
+
+2. Building your first DevOps Blue/Green pipeline with Amazon ECS
+https://catalog.us-east-1.prod.workshops.aws/workshops/4b59b9fb-48b6-461c-9377-907b2e33c9df/en-US
+
+
+
+
