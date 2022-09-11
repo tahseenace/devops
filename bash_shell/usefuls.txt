@@ -21,19 +21,87 @@ cat << EndOfFile
 [] brackets
 
 ===============================================================================================================
-
-
-
-
-
+Bash Expansions and Substitutions:
+------------------------------------
+~ : Tilde expansion (home directory)
+echo $HOME
+echo ~
+echo ~-
+------------------------------------
+{...} : Brace expansion
+{a,b,c}
+{x..y..i}
+echo c{a,u,o}t
+echo /tmp/{one,two,three}/file.txt
+echo /tmp/{1..4}/file.txt
+mkdir {one,two,three}.txt
+echo {00..100}
+echo {1..30..3}
+touch file_{01_12}{a..d}
+---------------------------------------------
+${...} : Parameter expansion
+greeting = "Hello there!"
+echo $greeting
+echo ${greeting}
+echo ${greeting:6}
+echo ${greeting:6:3}
+echo ${greeting/there/everybody}
+echo ${greeting//e/_} #replace all e with _
+---------------------------------------------
+$(...)  : Command substitution
+Older representation: `...`
+uname -r
+echo "The kernel version is $(uname -r)."
+---------------------------------------------
+$((...)) : Arithmetic expansion
+echo $((2+2))
+echo $((4-2))
+echo $((4*5))
+echo $((4/5))
+# does only with integers.
 
 ===============================================================================================================
+Programming with Bash:
 
+echo "the Kernel is $(uname -r)"
+ctrl+l # clear screen
 
+myvar="Hello!"
+echo "The value of myvar is : $myvar"
 
+#Variables can be defined once and not modified further
+declare -r myname="Tahseen"
 
+declare -l lowerstring="This is some Text!" # It changes all characters to lowercase.
+declare -u uppercase="This is another Text!" #It changes all characters to uppercase.
+
+env # shows all environment variables.
+echo $USER
+
+# Bash lets you work with numbers, but only with integers.
+$((..)) # Arithmetic expansion returns the result of the mathematical operations.
+((..))  # Arithmetic evaluation performs calculations and changes the value of the variables.
+
+echo $((4+4))
+echo $((9%2))
+a=3
+((a+=3))
+echo $a
+((a++))
+echo $a
+
+# Bash works with integers only. Consider using bc or awk for more precise calculations.
+declare -i c=1
+declare -i d=3
+e=$(echo "scale=3; $c/$d" | bc)
+echo $e
+
+echo $RANDOM # Returns random number between 0 and 32767.
+echo $(( 1 + $RANDOM % 10 )) # Random number between 1 and 10.
+echo $(( 1 + $RANDOM % 20 )) # Random number between 1 and 20.
 
 ===============================================================================================================
+Comparing values with test:
 
 
 

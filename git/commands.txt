@@ -23,8 +23,12 @@ touch file2 file3
 git add file2
 git status
 git add .
+git add -A
 git status
 git commit -m "first commit"
+
+git commit -a -m "adding file skipping stage"
+git commit -am "adding file skipping stage"
 
 git log
 git log --oneline
@@ -42,7 +46,6 @@ git rm --cached file3
 ls -ltr
 git status
 git commit -m "commit name"
-fit status
 git status
 
 git diff HEAD~1..HEAD
@@ -80,6 +83,13 @@ git push --set-upstream origin master
 =============================================================================================================
 Branch and Merge
 
+git breanch feature1 
+git checkout feature1
+git switch feature1
+git merge feature1
+git branch --merged
+git branch --no-merged
+
 touch new1 new2
 ls -ltr
 vi new1
@@ -90,7 +100,7 @@ git status
 git stash
 git status
 clear
-git statsh list
+git stash list
 git stash list
 git stash apply stash@{0}
 
