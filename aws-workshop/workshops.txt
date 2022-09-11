@@ -1,0 +1,17 @@
+Workshops
+------------------------
+
+Adding Security into DevOps
+------------------------------------------
+
+Scenario
+- build a pipeline using CodePipeline and AWS Lambda. S3 is code repository
+- developers want to deploy CloudFormatoin template
+- my goal is to ensure this template is secure before this goes to production
+
+Region: 
+- Oregon (us-west-2)
+
+
+
+
