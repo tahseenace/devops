@@ -1,0 +1,148 @@
+
+docker run
+docker start
+docker stop
+docker build
+docker pull
+docker push
+docker export
+docker images
+docker search # searcheds repository
+docker ps
+docker kill
+docker commit # creates a new image out of running container
+docker login
+docker exec # interact with the container shell directly
+docker inspect
+
+
+service docker status
+service docker restart
+--------------------------------------------------------------------------------------------------------------------------
+
+docker run <containername>
+docker ps      # all running containers
+docker ps -a   # all containers
+
+docker run --name naresh nginx # container created with name naresh
+docker rename <containerid> newname
+
+-it  # takes you to container bash
+-itd # interactive terminal detached mode
+
+docker run -itd --name mynginx nginx
+docker run -it --name myubuntu ubuntu # takes me to container shell
+
+# exit from container kills the process and takes me out of container. But, container stops in this case. 
+# ctrl+pq takes me out and container keeps on running
+
+docker run -it --name mynginx nginx
+# this does not take me to shell. we need to specify this.
+# hostname
+
+docker run -it --name tahseen nginx bash
+docker run -it --name tahseen nginx /bin/bash
+
+docker inspect <containerid or name>
+docker inspect <docker-image>
+
+# go to shell of the container irrepective of mode it was created
+docker exec -it <container name> /bin/bash
+docker exec -it <containerid> /bin/sh
+docker exec -it <containerid> /bin/bash
+
+# change something without logging into the container
+docker exec <containerid> touch /tmp/tahseen
+
+docker stop <containerid> # gracefully stops
+docker kill <contianerid> # forcefully kills
+
+# list all container ids
+docker ps -a -q
+
+# stop all containers
+docker stop $(docker ps -a -q)
+
+# remove all stopped containers
+docker rm $(docker ps -a -q)
+
+# delete all the containers that are not running
+docker container prune
+
+# copy a file from host to container
+docker cp conf.txt <containerid>:/tmp
+
+# copy a file from container to host
+docker cp <containerid>:/tmp .
+
+# access logs of a container
+docker logs -f <containerid>
+
+# useful docker info
+docker info
+
+docker stats # shows how much resources containers are using.
+
+--------------------------------------------------------------------------------------------------------------------------
+
+Port forwarding: docker engine randomly assigns port (32768-65535)
+Binding port: In this, we tell docker engine to assign a port
+
+
+Port Binding
+docker run -itd -p <hostport>:<containerport> --name <containername> <imagename>
+docker run -itd -p 80:80 --name mynginx nginx
+
+docker run -itd -P --name mynginx2 nginx # DE assings random port
+
+--------------------------------------------------------------------------------------------------------------------------
+
+docker run parameters
+
+-d: detached
+if -d is not specified, container runs in default foreground mode.
+For interactive processes (like a shell), you must use -i -t together in order to allocate a tty for the container process
+
+
+Usefuls:
+private ip: hostname -i
+public ip :  curl ifconfig.co
+fully qualified hostname: hostname -f
+
+--------------------------------------------------------------------------------------------------------------------------
+
+# Restart policy
+
+flags
+no         : default is no
+on-failure : starts if exit code is non-zero
+always     : irrespective of what happened, it always tries to bring it up
+unless-stopped : unless manually stopped
+
+docker run -itd -P --restart always tomcat
+
+docker history <imagename> # shows the changes done
+
+--------------------------------------------------------------------------------------------------------------------------
+# Create image from container
+docker commit -m "modified ubuntu with nginx" <contianer-id> <image-name>
+
+
+docker commit -m "further modification" -c 'CMD /usr/sbin/nginx -g "daemon off;"' -c 'EXPOSE 80' <container-id> <newimagename>
+# now container created out of this should show port number
+
+docker history <imagename>
+
+
+Dockerfile
+---------------
+
+
+
+
+
+
+
+
+Cmd Vs Entrypoint
+---------------------
