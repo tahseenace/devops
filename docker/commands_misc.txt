@@ -133,16 +133,31 @@ docker commit -m "further modification" -c 'CMD /usr/sbin/nginx -g "daemon off;"
 
 docker history <imagename>
 
-
-Dockerfile
----------------
-
-
+docker image prune     # this will remove all the dangling images.
+docker image prune -a  # this will remove any image without at least one container associated to them.
+docker rmi <imagename> # if container is in running state. you can force though.
 
 
+Saving Docker Images
+----------------------------------------------------------------------------
+
+docker tag <existing-image> <dockerhubaccount/repo:imagename>
+docker push tedureka/addressbook:v1
+docker login
 
 
+# docker save and docker load
+docker save <imagename> -o imagename.tar    # size is going to be huge
 
+# move this tar file using traditional method
+# tar file converts back to image
+docker load imagename.tar 
 
-Cmd Vs Entrypoint
----------------------
+# you can save containers also
+# using "docker export" you can convert container into tar file
+# tar file can not be converted back to container directly. It can be converted back to docker image.
+
+docker export <containerid> > newimage.tar
+docker import newimage.tar newimage
+# here load will not work, because this was not saved using docker save command
+------------------------------------------------------------------------------------------------------------------

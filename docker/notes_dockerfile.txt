@@ -1,0 +1,71 @@
+
+Dockerfile directives
+---------------------------------------------------------------------------
+
+FROM          :
+LABEL         :
+MAINTAINER    : allows you to set the Author field of the generated images
+RUN           :
+WORKDIR       :
+COPY          : copies from local to container
+ADD           : advanced command, copies from URL also. It also extracts the contents to destination.
+HEALTHCHECK   :
+ENV           : key-value
+VOLUME        : creates a mount point with the specified name
+STOPSIGNAL    : 
+EXPOSE        :
+CMD           :
+
+https://kapeli.com/cheat_sheets/Dockerfile.docset/Contents/Resources/Documents/index
+
+# build image from dockerfile
+
+docker build -t <imagename:v1> .
+docker build -t <imagename2:v1> -f <path of dockerfile> .
+
+HEALTHCHECK
+------------
+HEALTHCHECK CMD wget -q --method=HEAD localhost/system-status.txt
+
+docker exec f4693bfeda5c sh -c 'echo OK > /usr/share/nginx/html/system-status.txt'
+
+
+------------------------------------------------------------------------------------------------------------------
+
+CMD Vs ENTRYPOINT
+---------------------
+
+https://kapeli.com/cheat_sheets/Dockerfile.docset/Contents/Resources/Documents/index
+
+CMD
+
+Usage:
+
+CMD ["<executable>","<param1>","<param2>"] (exec form, this is the preferred form)
+CMD ["<param1>","<param2>"] (as default parameters to ENTRYPOINT)
+CMD <command> <param1> <param2> (shell form)
+
+Information:
+
+- The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.
+- There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect.
+- If CMD is used to provide default arguments for the ENTRYPOINT instruction, both the CMD and ENTRYPOINT instructions should be specified with the JSON array format.
+- If the user specifies arguments to docker run then they will override the default specified in CMD.
+- Normal shell processing does not occur when using the exec form. For example, CMD ["echo", "$HOME"] will not do variable substitution on $HOME.
+
+
+ENTRYPOINT
+
+Usage:
+
+ENTRYPOINT ["<executable>", "<param1>", "<param2>"] (exec form, preferred)
+ENTRYPOINT <command> <param1> <param2> (shell form)
+
+Information:
+
+- similar to CMD but makes the container executable. You can't override commands while creating containers. Entrypoint is secure. 
+- Allows you to configure a container that will run as an executable.
+- Command line arguments to docker run <image> will be appended after all elements in an exec form ENTRYPOINT and will override all elements specified using CMD.
+- The shell form prevents any CMD or run command line arguments from being used, but the ENTRYPOINT will start via the shell. This means the executable will not be PID 1 nor will it receive UNIX signals. Prepend exec to get around this drawback.
+- Only the last ENTRYPOINT instruction in the Dockerfile will have an effect.
+------------------------------------------------------------------------------------------------------------------

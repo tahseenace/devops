@@ -1,0 +1,41 @@
+
+
+# useful command
+docker system prune
+
+---------------------------------------------------------------------------
+
+docker volume ls
+
+docker volume create <volume-name>
+docker volume inspect vol1
+
+
+Volume Mapping
+----------------------------
+# Docker Engine dictates the directory structure or mount point.
+
+docker run -itd -P -v vol1:/app tomcat
+# volume is mapped
+
+docker volume create --driver local --opt o=size=100m vol2
+
+docker run -itd -P -v testing:/usr/local/tomcat/logs tomcat
+# if testing is not available, it will be created. 
+
+# Same volume can be shared with multiple containers
+
+docker volume rm <volume-name>
+docker volume prune
+
+docker volume ls -f dangling-true
+
+Bind Mount
+--------------------
+# It is similar to volume mapping except that you define your own directory structure
+# volume is not created here
+
+docker run -itd -P -v /tmp/dev:/usr/share/nginx/html nginx
+docker run -itd -P -v /tmp/prod:/usr/share/nginx/html nginx
+
+---------------------------------------------------------------------------------------------------
