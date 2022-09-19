@@ -1,0 +1,165 @@
+
+Example
+---
+pipeline {
+	agent any
+
+	stages {
+		stage('Build') {
+			steps {
+				echo 'building ...'
+			}
+		}
+		stage('Test') {
+			steps {
+				echo 'testing ...'
+			}
+		}
+		stage('Deploy') {
+			steps {
+				echo 'deploying ...'
+			}
+		}
+	}
+}
+
+---
+pipeline {
+    agent any
+
+    stages {
+        stage('Copy Repo') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/tahseenace/kubernetescode.git']]])
+            }
+        }
+        stage('Display Readme File') {
+            steps {
+                sh 'cat README.md'
+            }
+        }
+        stage('List S3 Buckets') {
+            steps {
+                sh 'aws s3 ls'
+            }
+        }
+    }
+}
+
+
+--------------------------------------------------------------------------------------------------------
+
+Jenkinsfile Post Section
+-------------------------
+pipeline {
+	agent any
+
+	stages {
+		stage('Example') {
+			steps {
+				echo 'Hello World ...'
+			}
+		}
+	}
+	post {
+		always {
+			echo 'I will always say Hello again ...'
+		}
+	}
+}
+
+----
+pipeline {
+	agent any
+
+	stages {
+		stage('Example') {
+			steps {
+				echo 'Hello World ...'
+			}
+		}
+	}
+	post {
+		failure {
+			echo 'Job failed'
+		}
+	}
+}
+
+--------------------------------------------------------------------------------------------------------
+
+pipeline {
+    agent none
+
+    stages {
+        stage('Copy Repo') {
+        	agent any
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/tahseenace/kubernetescode.git']]])
+            }
+        }
+        stage('Display Readme File') {
+            steps {
+                sh 'cat README.md'
+            }
+        }
+        stage('List S3 Buckets') {
+        	agent {
+        		label 'EC2Instance'
+        	}
+            steps {
+                sh 'aws s3 ls'
+            }
+            post {
+            	always {
+            		echo 'this is another example in which post is running inside stage job'
+            	}
+            }
+        }
+    }
+}
+
+# you can have multiple post conditions.
+
+--------------------------------------------------------------------------------------------------------
+Environment Variables in Jenkinsfile Pipeline
+----------------------------------------------
+
+pipeline {
+	agent any
+	environment {
+		STAGE = 'UAT'
+		DOCKERHUB_CREDS = credentials('dockerhub')
+	}
+
+	stages {
+		stage('Build') {
+			steps {
+				echo 'building ...'
+				echo 'Current stage is ${STAGE}'
+				echo 'Current build number is ${BUILD_NUMBER}'
+			}
+		}
+		stage('Test') {
+			steps {
+				echo 'testing ...'
+			}
+		}
+		stage('Docker Login') {
+			steps {
+				sh 'docker login -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW' # this will leave password visible in the config ..
+				sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'
+			}
+		}
+
+
+		stage('Deploy') {
+			steps {
+				echo 'deploying ...'
+			}
+		}
+	}
+}
+
+
+--------------------------------------------------------------------------------------------------------

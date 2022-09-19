@@ -68,4 +68,61 @@ Information:
 - Command line arguments to docker run <image> will be appended after all elements in an exec form ENTRYPOINT and will override all elements specified using CMD.
 - The shell form prevents any CMD or run command line arguments from being used, but the ENTRYPOINT will start via the shell. This means the executable will not be PID 1 nor will it receive UNIX signals. Prepend exec to get around this drawback.
 - Only the last ENTRYPOINT instruction in the Dockerfile will have an effect.
+
+
+------------------------------------------------
+Example
+--------
+Dockerfile_cmd
+
+FROM debian:wheezy
+CMD ["/bin/ping", "localhost"]
+---
+docker build -t cmd -f Dockerfile_cmd .
+docker run cmd 
+# It pings localhost
+
+docker run cmd echo "tahseen"
+# echo "tahseen" overrides CMD
+
+docker run -itd -P httpd echo "google.com"
+# echo google.com is run
+# CMD has security breach as it overrides the commmand run in the container
+--------------------------------------
+
+Dockerfile_entrypoint
+
+FROM debian:wheezy
+ENTRYPOINT ["/bin/ping", "localhost"]
+---
+docker build -t entrypoint -f Dockerfile_entrypoint .
+docker run entrypoint
+# ping localhost is supposed to run
+
+docker run entry echo "tahseen"
+# unknown host echo. 
+# /bin/ping localhost will not be overridden
+
+docker run entrpoint google.com
+# It will ping google.com. this is passed as input parameter to /bin/ping
+docker ps -a # command for container is going to remain same. 
+--------------------------------------
+
+Dockerfile_mixed
+
+FROM debian:wheezy
+ENTRYPOINT ["/bin/ping"]
+CMD ["localhost"]
+
+docker build -t mixed -f Dockerfile_mixed .
+docker run mixed
+# CMD value will work as input to ENTRYPOINT
+docker ps -a # verify the command value
+
+docker run mixed echo "tahseen"
+# echo tahseen is passed to entrypoint /bin/ping as input. 
+
+docker run mixed google.com
+# finally /bin/ping google.com will run
+
 ------------------------------------------------------------------------------------------------------------------

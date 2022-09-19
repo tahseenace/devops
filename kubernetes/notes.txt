@@ -1,0 +1,165 @@
+
+Components
+
+Master
+- apiserver: command interacts through this.
+- scheduler: schedules containers across nodes.
+- controller manager: manages replicas, deployment, replicaset.
+- ETCD: Cluster database in key-value format.
+
+Worker
+- kubelet: this is the agent on the worker node. This does all the tasks on worker node.  
+- CRI: Container Runtime Interface. 
+- proxy: Internode communication is done through proxy.
+- CNI: Container Network Interface. It runs on all nodes. 
+
+One cluster needs one type of CRI. 
+------------------------------------------------------------------------------------------------------------------------
+Pods
+
+- simplest units in kubernetes.
+- you can consider it as wrapper around your container.
+- IP changes when a container restarts. Pod's IP remains same and CNI manages it.
+- you can have multi-container pods.
+
+
+------------------------------------------------------------------------------------------------------------------------
+Commands:
+
+kubectl get nodes
+
+# get all the kubernetes components pod details
+kubectl get pods -n kube-system -o wide
+
+service kubelet status
+
+# Create a simple pod
+kubectl run pod1 --image nginx
+kubectl get pods
+kubectl get pods -o wide
+
+kubectl describe pod pod1
+kubectl exec -it pod1 -- bash
+
+# access your service in browser
+kubectl expose pod pod1 --name pod1svc --pot 80 --type NodePort
+kubectl describe svc pod1svc
+
+kubectl get pods --show-labels
+
+kubectl delete pod pod1
+kubectl delete svc pod1svc
+
+------------------------------------------------------------------------------------------------------------------------
+Service : Used to expose your application
+
+- NodePort :
+- ClusterIP :
+
+------------------------------------------------------------------------------------------------------------------------
+Namespaces
+-----------------
+kubectl get pods
+# no resource found in default namespace
+# it takes output from default namespace
+
+kubectl api-resources
+# this shows all the resources used in kubernetes
+
+kubectl get ns
+kubectl get pods -n kube-public
+kubectl get pods -n kube-system
+
+kubectl create ns tahseen # my own namespace
+kubectl run pod1 --image nginx -n tahseen
+kubectl get pods
+kubectl get pods -n tahseen
+kubectl describe pod pod1
+kubectl describe pod pod1 -n tahseen
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+manifest file
+
+# single-container pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tomcatpod
+  labels: 
+    app: MyApp
+spec:
+  containers: 
+  - name: tomcat
+    image: tomcat
+    ports:
+     - containerPort: 8080
+
+
+kubectl create -f pod.yml
+
+# multi-container pod
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-cont.ex 
+spec: 
+  restartPolicy: Never
+  containers:
+    - name: nginx
+      image: nginx
+      ports: 
+        - containerPort: 80
+
+    - name: alpine
+      image: alpine
+      command: ['sh', '-c', 'sleep 30']
+
+kubectl create -f multi-cont-ex.yml
+watch kubectl get pods
+watch kubectl get pods -o wide
+
+# manifest file to create replicaset (rs.yml)
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myrs
+spec:
+  replicas: 4
+  selector:
+    matchLabels: 
+      app: web
+  template:
+    metadata:
+      name: mypod
+      labels:
+        app: web
+    spec: 
+      containers:
+        - name: mycont
+          image: lerndevops/sampleapp:v1
+          ports: 
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysvc
+spec: 
+  type: NodePort
+  ports: 
+    - port: 80
+      targetPort: 3000
+      nodePort: 30005
+  selector: 
+    app: web
+
+kubectl get rs
+kubectl get pods
+kubectl get rs -o wide
+
+------------------------------------------------------------------------------------------------------------------------
